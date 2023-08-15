@@ -24,25 +24,20 @@
  */
 
 const rand = (): number => Math.floor(Math.random() * (200 - 100 + 1) + 100);
+// `replaceTubes` and `sortTubes` can method-chain combine to be 1 function: `replaceTubesAndSort`
+const replaceTubesAndSort = (tubeUnit: TubeUnit): TubeUnit => tubeUnit.map((_: number) => rand()).sort((a: number, b: number) => a - b);
 
-const replaceTubes = (tubeUnit: TubeUnit): TubeUnit => {
-  for (const tube in tubeUnit) {
-    tubeUnit[tube] = rand();
-  }
-  return tubeUnit;
-};
-
-const sortTubes = (tubeUnit: TubeUnit): number[] => (Object as any).values(tubeUnit).sort((a: number, b: number) => a - b);
+// const sortTubes = (tubeUnit: TubeUnit): number[] => tubeUnit.sort((a: number, b: number) => a - b);
 
 /**
  * Givens
  */
 
 const universityClassroom: Classroom = {
-  unitOne: { tubeOne: 0, tubeTwo: 0, tubeThree: 0, tubeFour: 0 },
-  unitTwo: { tubeOne: 0, tubeTwo: 0, tubeThree: 0, tubeFour: 0 },
-  unitThree: { tubeOne: 0, tubeTwo: 0, tubeThree: 0, tubeFour: 0 },
-  unitFour: { tubeOne: 0, tubeTwo: 0, tubeThree: 0, tubeFour: 0 }
+  unitOne: [0, 0, 0, 0],
+  unitTwo: [0, 0, 0, 0],
+  unitThree: [0, 0, 0, 0],
+  unitFour: [0, 0, 0, 0]
 };
 
 const yearInHours: number = 2700;
@@ -58,13 +53,7 @@ type Classroom = {
   unitFour: TubeUnit;
 };
 
-// convert to array and sort early in process?
-type TubeUnit = {
-  tubeOne: number;
-  tubeTwo: number;
-  tubeThree: number;
-  tubeFour: number;
-};
+type TubeUnit = number[];
 
 type Cost = {
   "total": number;
@@ -74,24 +63,26 @@ type Cost = {
  * Simulation
  */
 
-// initial Classroom Tube Unit setup
+// initial Classroom Tube Unit setup IIFE
 ((classroom: Classroom) => {
   for (const unit in classroom) {
-    classroom[unit] = replaceTubes(classroom[unit]);
+    classroom[unit] = replaceTubesAndSort(classroom[unit]);
   }
 })(universityClassroom);
 
-const degradeTubes = (unit: TubeUnit): void => {
-  const sortedTubes: number[] = sortTubes(unit);
-  // I think we only need to count down the second sorted tube, as this will determine when unit replacement occurs
-  while (sortedTubes[1] >= 0) {
-    sortedTubes.forEach((tube: number) => --tube)
-  }
-};
+// const degradeTubes = (unit: TubeUnit): void => {
+//   const sortedTubes: number[] = sortTubes(unit);
+//   // I think we only need to count down the second sorted tube, as this will determine when unit replacement occurs
+//   while (sortedTubes[1] >= 0) {
+//     sortedTubes.forEach((tube: number) => --tube)
+//   }
+// };
 
 const computeTubesBrokenAndCosts = (classroom: Classroom): void => {
-  // sort classroom
-  const sortedClassroom: TubeUnit[] = []
+  // sort classroom by second item unit[1] of each unit, these will be the determining tubes as they will force unit replacement
+  const sortedClassroom: TubeUnit[] = (Object as any).values(classroom).sort((a: any, b: any) => a[1] - b[1]);
+  // compare [1] second tube of each unit to find smallest
+  // replaceTubes and subtract [1] smallest from next smallest && yearInHours, repeat
   for (const unit in classroom) {
 
   }
@@ -110,6 +101,9 @@ const computeTubesBrokenAndCosts = (classroom: Classroom): void => {
 // computeTubesBrokenAndCosts(universityClassroom);
 console.log("classroom init install:", universityClassroom);
 
-console.log("replaceTubes classroom unitOne:", replaceTubes(universityClassroom.unitOne));
+console.log("replaceTubes classroom unitOne:", replaceTubesAndSort(universityClassroom.unitOne));
 
-console.log("classroom unitOne SORTED:", sortTubes(universityClassroom.unitOne));
+// console.log("classroom unitOne SORTED:", sortTubes(universityClassroom.unitOne));
+
+const sortedClassroom: TubeUnit[] = (Object as any).values(universityClassroom).sort((a: any, b: any) => a[1] - b[1]);
+console.log("sorted classroom:", sortedClassroom);

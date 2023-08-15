@@ -22,45 +22,53 @@
  * Helpers
  */
 var rand = function () { return Math.floor(Math.random() * (200 - 100 + 1) + 100); };
-var replaceTubes = function (tubeUnit) {
-    for (var tube in tubeUnit) {
-        tubeUnit[tube] = rand();
-    }
-    return tubeUnit;
-};
-var sortTubes = function (tubeUnit) { return Object.values(tubeUnit).sort(function (a, b) { return a - b; }); };
+// `replaceTubes` and `sortTubes` can method-chain combine to be 1 function: `replaceTubesAndSort`
+var replaceTubesAndSort = function (tubeUnit) { return tubeUnit.map(function (_) { return rand(); }).sort(function (a, b) { return a - b; }); };
+// const sortTubes = (tubeUnit: TubeUnit): number[] => tubeUnit.sort((a: number, b: number) => a - b);
 /**
  * Givens
  */
 var universityClassroom = {
-    unitOne: { tubeOne: 0, tubeTwo: 0, tubeThree: 0, tubeFour: 0 },
-    unitTwo: { tubeOne: 0, tubeTwo: 0, tubeThree: 0, tubeFour: 0 },
-    unitThree: { tubeOne: 0, tubeTwo: 0, tubeThree: 0, tubeFour: 0 },
-    unitFour: { tubeOne: 0, tubeTwo: 0, tubeThree: 0, tubeFour: 0 }
+    unitOne: [0, 0, 0, 0],
+    unitTwo: [0, 0, 0, 0],
+    unitThree: [0, 0, 0, 0],
+    unitFour: [0, 0, 0, 0]
 };
 var yearInHours = 2700;
 /**
  * Simulation
  */
-// initial Classroom Tube Unit setup
+// initial Classroom Tube Unit setup IIFE
 (function (classroom) {
     for (var unit in classroom) {
-        classroom[unit] = replaceTubes(classroom[unit]);
+        classroom[unit] = replaceTubesAndSort(classroom[unit]);
     }
 })(universityClassroom);
-// const computeTubesBrokenAndCosts = (classroom: Classroom): void => {
-//   // install first set of Tubes
-//   for (const unit in classroom) {
-//     classroom[unit] = replaceTubes(classroom[unit]);
-//   }
-//   while (yearInHours >= 0) {
+// const degradeTubes = (unit: TubeUnit): void => {
+//   const sortedTubes: number[] = sortTubes(unit);
+//   // I think we only need to count down the second sorted tube, as this will determine when unit replacement occurs
+//   while (sortedTubes[1] >= 0) {
+//     sortedTubes.forEach((tube: number) => --tube)
 //   }
 // };
+var computeTubesBrokenAndCosts = function (classroom) {
+    // sort classroom by second item unit[1] of each unit
+    var sortedClassroom = Object.values(classroom).sort(function (a, b) { return a[1] - b[1]; });
+    // compare [1] second tube of each unit to find smallest
+    // replaceTubes and subtract [1] smallest from next smallest && yearInHours, repeat
+    for (var unit in classroom) {
+    }
+    while (yearInHours >= 0) {
+        // need to compare all sorted "second" tubes to find smallest
+    }
+};
 /**
  * Above implementation has poor Time Complexity but is solved Algorithmically
  */
 // currently just simulates first classroom installation
 // computeTubesBrokenAndCosts(universityClassroom);
 console.log("classroom init install:", universityClassroom);
-console.log("replaceTubes classroom unitOne:", replaceTubes(universityClassroom.unitOne));
-console.log("classroom unitOne SORTED", sortTubes(universityClassroom.unitOne));
+console.log("replaceTubes classroom unitOne:", replaceTubesAndSort(universityClassroom.unitOne));
+// console.log("classroom unitOne SORTED:", sortTubes(universityClassroom.unitOne));
+var sortedClassroom = Object.values(universityClassroom).sort(function (a, b) { return a[1] - b[1]; });
+console.log("sorted classroom:", sortedClassroom);
