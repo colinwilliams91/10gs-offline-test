@@ -52,14 +52,10 @@ var yearInHours = 2700;
 //   }
 // };
 var computeTubesBrokenAndCosts = function (classroom) {
-    // sort classroom by second item unit[1] of each unit
+    // sort classroom by second item unit[1] of each unit, these will be the determining tubes as they will force unit replacement
     var sortedClassroom = Object.values(classroom).sort(function (a, b) { return a[1] - b[1]; });
-    // compare [1] second tube of each unit to find smallest
     // replaceTubes and subtract [1] smallest from next smallest && yearInHours, repeat
-    for (var unit in classroom) {
-    }
     while (yearInHours >= 0) {
-        // need to compare all sorted "second" tubes to find smallest
     }
 };
 /**
