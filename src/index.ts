@@ -81,15 +81,12 @@ type Cost = {
 const computeTubesBrokenAndCosts = (classroom: Classroom): void => {
   // sort classroom by second item unit[1] of each unit, these will be the determining tubes as they will force unit replacement
   const sortedClassroom: TubeUnit[] = (Object as any).values(classroom).sort((a: any, b: any) => a[1] - b[1]);
-  // compare [1] second tube of each unit to find smallest
-  // replaceTubes and subtract [1] smallest from next smallest && yearInHours, repeat
-  for (const unit in classroom) {
 
-  }
+  // replaceTubes and subtract [1] smallest from next smallest && yearInHours, repeat
+
 
   while (yearInHours >= 0) {
 
-    // need to compare all sorted "second" tubes to find smallest
   }
 };
 
