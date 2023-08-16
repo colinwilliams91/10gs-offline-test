@@ -81,26 +81,35 @@ type Cost = {
 const computeTubesBrokenAndCosts = (classroom: Classroom): void => {
   // sort classroom by second item unit[1] of each unit, these will be the determining tubes as they will force unit replacement
   const sortedClassroom: TubeUnit[] = (Object as any).values(classroom).sort((a: any, b: any) => a[1] - b[1]);
+  console.log("sorted CLASSROOM:", sortedClassroom);
+  // replacerTubes will be an array of each second shortest-life Tube (when these break units are replaced, incurring costs)
+  const replacerTubes: any = sortedClassroom.map((unit: TubeUnit, i: number) => unit[1]);
+  console.log("replacer tubes:", replacerTubes);
+  // need to watch for when replacer tube == 0
+  // subtract replacer tube life from yearInHours and all other Tubes
+  // incur $7 to cost.total and tube count obj (init this)
+  // replace entire unit from parent unit to replacer Tube (need to figure out a way to track this from replacerTubes array...)
+  // repeat
 
   // replaceTubes and subtract [1] smallest from next smallest && yearInHours, repeat
+  // while (yearInHours >= 0) {
 
-
-  while (yearInHours >= 0) {
-
-  }
+  // }
 };
 
 /**
  * Above implementation has poor Time Complexity but is solved Algorithmically
  */
 
-// currently just simulates first classroom installation
-// computeTubesBrokenAndCosts(universityClassroom);
 console.log("classroom init install:", universityClassroom);
 
-console.log("replaceTubes classroom unitOne:", replaceTubesAndSort(universityClassroom.unitOne));
+// console.log("replaceTubes classroom unitOne:", replaceTubesAndSort(universityClassroom.unitOne));
 
 // console.log("classroom unitOne SORTED:", sortTubes(universityClassroom.unitOne));
 
-const sortedClassroom: TubeUnit[] = (Object as any).values(universityClassroom).sort((a: any, b: any) => a[1] - b[1]);
-console.log("sorted classroom:", sortedClassroom);
+// const sortedClassroom: TubeUnit[] = (Object as any).values(universityClassroom).sort((a: any, b: any) => a[1] - b[1]);
+// console.log("sorted classroom:", sortedClassroom);
+
+
+computeTubesBrokenAndCosts(universityClassroom);
+console.log("after simulation/sort?:", universityClassroom);
