@@ -22,28 +22,18 @@
  * Helpers
  */
 var rand = function () { return Math.floor(Math.random() * (200 - 100 + 1) + 100); };
-// `replaceTubes` and `sortTubes` can method-chain combine to be 1 function: `replaceTubesAndSort`
 var replaceTubesAndSort = function (tubeUnit) { return tubeUnit.map(function (_) { return rand(); }).sort(function (a, b) { return a - b; }); };
+var sortClassroom = function (classroom) { return classroom.sort(function (tubeUnitOne, tubeUnitTwo) { return tubeUnitOne[1] - tubeUnitTwo[1]; }); };
 // const sortTubes = (tubeUnit: TubeUnit): number[] => tubeUnit.sort((a: number, b: number) => a - b);
 /**
  * Givens
  */
-var universityClassroom = {
-    unitOne: [0, 0, 0, 0],
-    unitTwo: [0, 0, 0, 0],
-    unitThree: [0, 0, 0, 0],
-    unitFour: [0, 0, 0, 0]
-};
+var universityClassroom = Array.from({ length: 4 }, function () { return replaceTubesAndSort([0, 0, 0, 0]); });
+var tubesAndCost = { tubes: 0, cost: 0 };
 var yearInHours = 2700;
 /**
  * Simulation
  */
-// initial Classroom Tube Unit setup IIFE
-(function (classroom) {
-    for (var unit in classroom) {
-        classroom[unit] = replaceTubesAndSort(classroom[unit]);
-    }
-})(universityClassroom);
 // const degradeTubes = (unit: TubeUnit): void => {
 //   const sortedTubes: number[] = sortTubes(unit);
 //   // I think we only need to count down the second sorted tube, as this will determine when unit replacement occurs
@@ -51,29 +41,31 @@ var yearInHours = 2700;
 //     sortedTubes.forEach((tube: number) => --tube)
 //   }
 // };
-var computeTubesBrokenAndCosts = function (classroom) {
+var computeTubesBrokenAndCosts = function (classroom, runTimeHours, output) {
     // sort classroom by second item unit[1] of each unit, these will be the determining tubes as they will force unit replacement
-    var sortedClassroom = Object.values(classroom).sort(function (a, b) { return a[1] - b[1]; });
+    var sortedClassroom = sortClassroom(classroom);
     console.log("sorted CLASSROOM:", sortedClassroom);
-    // replacerTubes will be an array of each second shortest-life Tube (when these break units are replaced, incurring costs)
-    var replacerTubes = sortedClassroom.map(function (unit, i) { return unit[1]; });
-    console.log("TEST:", replacerTubes);
-    // need to watch for when replacer tube == 0
-    // subtract replacer tube life from yearInHours and all other Tubes
-    // incur $7 to cost.total and tube count obj (init this)
-    // replace entire unit from parent unit to replacer Tube (need to figure out a way to track this from replacerTubes array...)
-    // repeat
-    // replaceTubes and subtract [1] smallest from next smallest && yearInHours, repeat
-    // while (yearInHours >= 0) {
-    // }
+    while (runTimeHours >= 0) {
+        sortedClassroom.forEach(function (unit, _, classroom) {
+            console.log("step:", sortedClassroom);
+            if (unit[1] > 0) {
+                unit[1]--;
+                runTimeHours--;
+            }
+            else {
+                unit = replaceTubesAndSort(unit);
+                // we need to sort the Classroom again here because a new TubeUnit could theoretically expire two Tubes before a previously existing TubeUnit
+                classroom = sortClassroom(sortedClassroom);
+                runTimeHours--;
+                output.tubes += 1 * 4;
+                output.cost += 7 * 4;
+            }
+        });
+    }
+    console.log(output);
+    return output;
 };
 /**
  * Above implementation has poor Time Complexity but is solved Algorithmically
  */
-console.log("classroom init install:", universityClassroom);
-// console.log("replaceTubes classroom unitOne:", replaceTubesAndSort(universityClassroom.unitOne));
-// console.log("classroom unitOne SORTED:", sortTubes(universityClassroom.unitOne));
-// const sortedClassroom: TubeUnit[] = (Object as any).values(universityClassroom).sort((a: any, b: any) => a[1] - b[1]);
-// console.log("sorted classroom:", sortedClassroom);
-computeTubesBrokenAndCosts(universityClassroom);
-console.log("after simulation/sort?:", universityClassroom);
+computeTubesBrokenAndCosts(universityClassroom, yearInHours, tubesAndCost);

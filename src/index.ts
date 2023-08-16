@@ -24,8 +24,10 @@
  */
 
 const rand = (): number => Math.floor(Math.random() * (200 - 100 + 1) + 100);
-// `replaceTubes` and `sortTubes` can method-chain combine to be 1 function: `replaceTubesAndSort`
+
 const replaceTubesAndSort = (tubeUnit: TubeUnit): TubeUnit => tubeUnit.map((_: number) => rand()).sort((a: number, b: number) => a - b);
+
+const sortClassroom = (classroom: Classroom): Classroom => classroom.sort((tubeUnitOne: TubeUnit, tubeUnitTwo: TubeUnit) => tubeUnitOne[1] - tubeUnitTwo[1]);
 
 // const sortTubes = (tubeUnit: TubeUnit): number[] => tubeUnit.sort((a: number, b: number) => a - b);
 
@@ -33,42 +35,25 @@ const replaceTubesAndSort = (tubeUnit: TubeUnit): TubeUnit => tubeUnit.map((_: n
  * Givens
  */
 
-const universityClassroom: Classroom = {
-  unitOne: [0, 0, 0, 0],
-  unitTwo: [0, 0, 0, 0],
-  unitThree: [0, 0, 0, 0],
-  unitFour: [0, 0, 0, 0]
-};
+const universityClassroom: Classroom = (Array as any).from({ length: 4 }, () => replaceTubesAndSort([0, 0, 0, 0]));
 
-const yearInHours: number = 2700;
+const tubesAndCost: TubesAndCost = { tubes: 0, cost: 0 };
+
+let yearInHours: number = 2700;
 
 /**
  * Types
  */
 
-type Classroom = {
-  unitOne: TubeUnit;
-  unitTwo: TubeUnit;
-  unitThree: TubeUnit;
-  unitFour: TubeUnit;
-};
+type Classroom = TubeUnit[];
 
 type TubeUnit = number[];
 
-type Cost = {
-  "total": number;
-};
+type TubesAndCost = { "tubes": number; "cost": number; };
 
 /**
  * Simulation
  */
-
-// initial Classroom Tube Unit setup IIFE
-((classroom: Classroom) => {
-  for (const unit in classroom) {
-    classroom[unit] = replaceTubesAndSort(classroom[unit]);
-  }
-})(universityClassroom);
 
 // const degradeTubes = (unit: TubeUnit): void => {
 //   const sortedTubes: number[] = sortTubes(unit);
@@ -78,38 +63,33 @@ type Cost = {
 //   }
 // };
 
-const computeTubesBrokenAndCosts = (classroom: Classroom): void => {
+const computeTubesBrokenAndCosts = (classroom: Classroom, runTimeHours: number, output: TubesAndCost): TubesAndCost => {
   // sort classroom by second item unit[1] of each unit, these will be the determining tubes as they will force unit replacement
-  const sortedClassroom: TubeUnit[] = (Object as any).values(classroom).sort((a: any, b: any) => a[1] - b[1]);
+  let sortedClassroom: TubeUnit[] = sortClassroom(classroom);
   console.log("sorted CLASSROOM:", sortedClassroom);
-  // replacerTubes will be an array of each second shortest-life Tube (when these break units are replaced, incurring costs)
-  const replacerTubes: any = sortedClassroom.map((unit: TubeUnit, i: number) => unit[1]);
-  console.log("replacer tubes:", replacerTubes);
-  // need to watch for when replacer tube == 0
-  // subtract replacer tube life from yearInHours and all other Tubes
-  // incur $7 to cost.total and tube count obj (init this)
-  // replace entire unit from parent unit to replacer Tube (need to figure out a way to track this from replacerTubes array...)
-  // repeat
 
-  // replaceTubes and subtract [1] smallest from next smallest && yearInHours, repeat
-  // while (yearInHours >= 0) {
-
-  // }
+  while (runTimeHours >= 0) {
+    sortedClassroom.forEach((unit: TubeUnit, _, classroom: Classroom) => {
+      console.log("step:", sortedClassroom);
+      if (unit[1] > 0) {
+        unit[1]--;
+        runTimeHours--;
+      } else {
+        unit = replaceTubesAndSort(unit);
+        // we need to sort the Classroom again here because a new TubeUnit could theoretically expire two Tubes before a previously existing TubeUnit
+        classroom = sortClassroom(sortedClassroom);
+        runTimeHours--;
+        output.tubes += 1 * 4;
+        output.cost += 7 * 4;
+      }
+    });
+  }
+  console.log(output);
+  return output;
 };
 
 /**
  * Above implementation has poor Time Complexity but is solved Algorithmically
  */
 
-console.log("classroom init install:", universityClassroom);
-
-// console.log("replaceTubes classroom unitOne:", replaceTubesAndSort(universityClassroom.unitOne));
-
-// console.log("classroom unitOne SORTED:", sortTubes(universityClassroom.unitOne));
-
-// const sortedClassroom: TubeUnit[] = (Object as any).values(universityClassroom).sort((a: any, b: any) => a[1] - b[1]);
-// console.log("sorted classroom:", sortedClassroom);
-
-
-computeTubesBrokenAndCosts(universityClassroom);
-console.log("after simulation/sort?:", universityClassroom);
+computeTubesBrokenAndCosts(universityClassroom, yearInHours, tubesAndCost);
