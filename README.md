@@ -1,6 +1,6 @@
 # 10Gs Offline Test
 
-Solution is inside `master` branch.
+Please pull `master` branch for solution.
 
 ## To run:
 
