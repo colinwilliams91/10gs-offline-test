@@ -25,5 +25,5 @@ npm i typescript --save-dev
 
 OR
 
-you can run `npx tsc` without installing typescript
+you can run `npx tsc index.ts` without installing typescript
 
