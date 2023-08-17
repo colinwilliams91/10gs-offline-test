@@ -12,7 +12,7 @@ tsc index.ts # <-- to compile ts to js
 node index.js # <-- to run
 ```
 
-[Simulation]() `computeTubesBrokenAndCost` function returns and logs output inside function scope.
+[Simulation]   `computeTubesBrokenAndCost` function returns and logs output inside function scope.
 
 ## To Install
 ### TypeScript && Node
