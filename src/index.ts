@@ -7,7 +7,10 @@
  *  - 15 hours  / day
  *  - 5  days   / week (15 * 5 == 75 hours)
  *  - 9  months / year (1 month == 4 weeks?) (9 * 4 == 36 * 75 == 2700 hours)
+ *
  *  (google thinks 9 months == 39 weeks / 2925 hours)
+ *  (2700 / 150 (avg tube life in hrs) == 18 * 4 == 72 tubes * $7 == $504)
+ *  (solution: if 2700 hours of use, should average 72 tubes @ $504)
  *
  * - Tubes:
  *  - Tube Life:
@@ -27,9 +30,8 @@ const rand = (): number => Math.floor(Math.random() * (200 - 100 + 1) + 100);
 
 const replaceTubesAndSort = (tubeUnit: TubeUnit): TubeUnit => tubeUnit.map((_: number) => rand()).sort((a: number, b: number) => a - b);
 
+// sorts classRoom Matrix by shortest second item (Tube) to longest (array[1])
 const sortClassroom = (classroom: Classroom): Classroom => classroom.sort((tubeUnitOne: TubeUnit, tubeUnitTwo: TubeUnit) => tubeUnitOne[1] - tubeUnitTwo[1]);
-
-// const sortTubes = (tubeUnit: TubeUnit): number[] => tubeUnit.sort((a: number, b: number) => a - b);
 
 /**
  * Givens
@@ -55,29 +57,20 @@ type TubesAndCost = { "tubes": number; "cost": number; };
  * Simulation
  */
 
-// const degradeTubes = (unit: TubeUnit): void => {
-//   const sortedTubes: number[] = sortTubes(unit);
-//   // I think we only need to count down the second sorted tube, as this will determine when unit replacement occurs
-//   while (sortedTubes[1] >= 0) {
-//     sortedTubes.forEach((tube: number) => --tube)
-//   }
-// };
-
 const computeTubesBrokenAndCosts = (classroom: Classroom, runTimeHours: number, output: TubesAndCost): TubesAndCost => {
   // sort classroom by second item unit[1] of each unit, these will be the determining tubes as they will force unit replacement
   let sortedClassroom: TubeUnit[] = sortClassroom(classroom);
   console.log("sorted CLASSROOM:", sortedClassroom);
 
   while (runTimeHours >= 0) {
-    sortedClassroom.forEach((unit: TubeUnit, _, classroom: Classroom) => {
-      console.log("step:", sortedClassroom);
+    sortedClassroom.forEach((unit: TubeUnit, i: number, classroom: Classroom) => {
       if (unit[1] > 0) {
+        console.log(classroom);
         unit[1]--;
         runTimeHours--;
       } else {
-        unit = replaceTubesAndSort(unit);
-        // we need to sort the Classroom again here because a new TubeUnit could theoretically expire two Tubes before a previously existing TubeUnit
-        classroom = sortClassroom(sortedClassroom);
+        // when the second shortest Tube hits 0 from its generated "hour life expectancy" we "replace" the Tube Unit (array inside "classroom matrix")
+        sortedClassroom[i] = replaceTubesAndSort(unit);
         runTimeHours--;
         output.tubes += 1 * 4;
         output.cost += 7 * 4;
