@@ -4,7 +4,7 @@ Please pull `master` branch for solution.
 
 ## To run:
 
-(_typescript and node are installed globally on my machine_)
+(_you will need typescript and node installed to run these commands_)
 
 ```sh
 cd src
