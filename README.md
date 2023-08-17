@@ -14,7 +14,8 @@ node index.js # <-- to run
 
 Simulation function returns and logs output inside function scope.
 
-## Node && TypeScript Installation
+## To Install
+### TypeScript && Node
 
 [Node v18](https://nodejs.dev/en/download/)
 
