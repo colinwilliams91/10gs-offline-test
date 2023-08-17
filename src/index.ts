@@ -7,7 +7,10 @@
  *  - 15 hours  / day
  *  - 5  days   / week (15 * 5 == 75 hours)
  *  - 9  months / year (1 month == 4 weeks?) (9 * 4 == 36 * 75 == 2700 hours)
+ *
  *  (google thinks 9 months == 39 weeks / 2925 hours)
+ *  (2700 / 150 (avg tube life in hrs) == 18 * 4 == 72 tubes * $7 == $504)
+ *  (solution: if 2700 hours of use, should average 72 tubes @ $504)
  *
  * - Tubes:
  *  - Tube Life:
@@ -25,91 +28,61 @@
 
 const rand = (): number => Math.floor(Math.random() * (200 - 100 + 1) + 100);
 
-const replaceTubes = (tubeUnit: TubeUnit): TubeUnit => {
-  for (const tube in tubeUnit) {
-    tubeUnit[tube] = rand();
-  }
-  return tubeUnit;
-};
+const replaceTubesAndSort = (tubeUnit: TubeUnit): TubeUnit => tubeUnit.map((_: number) => rand()).sort((a: number, b: number) => a - b);
 
-const sortTubes = (tubeUnit: TubeUnit): number[] => (Object as any).values(tubeUnit).sort((a: number, b: number) => a - b);
+// sorts classRoom Matrix by shortest second item (Tube) to longest (array[1])
+const sortClassroom = (classroom: Classroom): Classroom => classroom.sort((tubeUnitOne: TubeUnit, tubeUnitTwo: TubeUnit) => tubeUnitOne[1] - tubeUnitTwo[1]);
 
 /**
  * Givens
  */
 
-const universityClassroom: Classroom = {
-  unitOne: { tubeOne: 0, tubeTwo: 0, tubeThree: 0, tubeFour: 0 },
-  unitTwo: { tubeOne: 0, tubeTwo: 0, tubeThree: 0, tubeFour: 0 },
-  unitThree: { tubeOne: 0, tubeTwo: 0, tubeThree: 0, tubeFour: 0 },
-  unitFour: { tubeOne: 0, tubeTwo: 0, tubeThree: 0, tubeFour: 0 }
-};
+const universityClassroom: Classroom = (Array as any).from({ length: 4 }, () => replaceTubesAndSort([0, 0, 0, 0]));
 
-const yearInHours: number = 2700;
+const tubesAndCost: TubesAndCost = { tubes: 0, cost: 0 };
+
+let yearInHours: number = 2700;
 
 /**
  * Types
  */
 
-type Classroom = {
-  unitOne: TubeUnit;
-  unitTwo: TubeUnit;
-  unitThree: TubeUnit;
-  unitFour: TubeUnit;
-};
+type Classroom = TubeUnit[];
 
-// convert to array and sort early in process?
-type TubeUnit = {
-  tubeOne: number;
-  tubeTwo: number;
-  tubeThree: number;
-  tubeFour: number;
-};
+type TubeUnit = number[];
 
-type Cost = {
-  "total": number;
-};
+type TubesAndCost = { "tubes": number; "cost": number; };
 
 /**
  * Simulation
  */
 
-// initial Classroom Tube Unit setup
-((classroom: Classroom) => {
-  for (const unit in classroom) {
-    classroom[unit] = replaceTubes(classroom[unit]);
+const computeTubesBrokenAndCosts = (classroom: Classroom, runTimeHours: number, output: TubesAndCost): TubesAndCost => {
+  // sort classroom by second item unit[1] of each unit, these will be the determining tubes as they will force unit replacement
+  let sortedClassroom: TubeUnit[] = sortClassroom(classroom);
+  console.log("sorted CLASSROOM:", sortedClassroom);
+
+  while (runTimeHours >= 0) {
+    sortedClassroom.forEach((unit: TubeUnit, i: number, classroom: Classroom) => {
+      if (unit[1] > 0) {
+        console.log(classroom);
+        unit[1]--;
+        runTimeHours--;
+      } else {
+        // when the second shortest Tube hits 0 from its generated "hour life expectancy" we "replace" the Tube Unit (array inside "classroom matrix")
+        sortedClassroom[i] = replaceTubesAndSort(unit);
+        runTimeHours--;
+        output.tubes += 1 * 4;
+        output.cost += 7 * 4;
+      }
+    });
   }
-})(universityClassroom);
-
-const degradeTubes = (unit: TubeUnit): void => {
-  const sortedTubes: number[] = sortTubes(unit);
-  // I think we only need to count down the second sorted tube, as this will determine when unit replacement occurs
-  while (sortedTubes[1] >= 0) {
-    sortedTubes.forEach((tube: number) => --tube)
-  }
-};
-
-const computeTubesBrokenAndCosts = (classroom: Classroom): void => {
-  // sort classroom
-  const sortedClassroom: TubeUnit[] = []
-  for (const unit in classroom) {
-
-  }
-
-  while (yearInHours >= 0) {
-
-    // need to compare all sorted "second" tubes to find smallest
-  }
+  console.log(output);
+  return output;
 };
 
 /**
  * Above implementation has poor Time Complexity but is solved Algorithmically
  */
 
-// currently just simulates first classroom installation
-// computeTubesBrokenAndCosts(universityClassroom);
-console.log("classroom init install:", universityClassroom);
-
-console.log("replaceTubes classroom unitOne:", replaceTubes(universityClassroom.unitOne));
-
-console.log("classroom unitOne SORTED:", sortTubes(universityClassroom.unitOne));
+computeTubesBrokenAndCosts(universityClassroom, yearInHours, tubesAndCost);
