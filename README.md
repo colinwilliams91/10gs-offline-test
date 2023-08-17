@@ -13,3 +13,16 @@ node index.js # <-- to run
 ```
 
 Simulation function returns and logs output inside function scope.
+
+## Node && TypeScript Installation
+
+[Node v18](https://nodejs.dev/en/download/)
+
+```sh
+npm i typescript --save-dev 
+```
+
+OR
+
+you can run `npx tsc` without installing typescript
+
