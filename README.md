@@ -1,5 +1,7 @@
 # 10Gs Offline Test
 
+Solution is inside `master` branch.
+
 ## To run:
 
 (_typescript and node are installed globally on my machine_)
