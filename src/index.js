@@ -51,7 +51,7 @@ var computeTubesBrokenAndCosts = function (classroom, runTimeHours, output) {
             else {
                 // when the second shortest Tube hits 0 from its generated "hour life expectancy" we "replace" the Tube Unit (array inside "classroom matrix")
                 sortedClassroom[i] = replaceTubesAndSort(unit);
-                runTimeHours--;
+                // runTimeHours--;
                 output.tubes += 1 * 4;
                 output.cost += 7 * 4;
             }
