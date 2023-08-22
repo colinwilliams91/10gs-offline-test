@@ -43,6 +43,8 @@ const tubesAndCost: TubesAndCost = { tubes: 0, cost: 0 };
 
 let yearInHours: number = 2700;
 
+const brokenTubeTracker = { 0: false, 1: false, 2: false, 3: false };
+
 /**
  * Types
  */
@@ -53,6 +55,8 @@ type TubeUnit = number[];
 
 type TubesAndCost = { "tubes": number; "cost": number; };
 
+type BrokenTubeTracker = { 0: boolean, 1: boolean, 2: boolean, 3: boolean };
+
 /**
  * Simulation
  */
@@ -61,18 +65,38 @@ const computeTubesBrokenAndCosts = (classroom: Classroom, runTimeHours: number, 
   // sort classroom by second item unit[1] of each unit, these will be the determining tubes as they will force unit replacement
   let sortedClassroom: TubeUnit[] = sortClassroom(classroom);
   console.log("sorted CLASSROOM:", sortedClassroom);
+  // to keep this function modular, it will calculate how many tubes are currently installed in the classroom for TubesAndCost output:
+  sortedClassroom.forEach((unit: TubeUnit) => {
+    unit.forEach((tube: number) => {
+      output.tubes++;
+      output.cost += 7;
+    });
+  });
+  console.log("init cost:", output);
 
   while (runTimeHours >= 0) {
+    let containsBrokenTube: boolean = false;
     sortedClassroom.forEach((unit: TubeUnit, i: number, classroom: Classroom) => {
+      // containsBrokenTube = unit.includes(0);
+      unit[0]--;
+      unit[1]--;
+      unit[2]--;
+      unit[3]--;
+      if (unit[0] < 1 && !containsBrokenTube) {
+        containsBrokenTube = true;
+        output.tubes += 1;
+        output.cost += 7;
+      }
       if (unit[1] > 0) {
-        console.log(classroom);
-        unit[1]--;
+        // console.log(classroom);
+        // unit[1]--;
         runTimeHours--;
+        // TODO: above runTimeHours should only change ONCE per 16 tubes tick...
       } else {
         // when the second shortest Tube hits 0 from its generated "hour life expectancy" we "replace" the Tube Unit (array inside "classroom matrix")
         sortedClassroom[i] = replaceTubesAndSort(unit);
-        output.tubes += 1 * 4;
-        output.cost += 7 * 4;
+        output.tubes += 1 * 3;
+        output.cost += 7 * 3;
       }
     });
   }
@@ -85,3 +109,25 @@ const computeTubesBrokenAndCosts = (classroom: Classroom, runTimeHours: number, 
  */
 
 computeTubesBrokenAndCosts(universityClassroom, yearInHours, tubesAndCost);
+
+
+
+function degradeAllTubes(classRoom: Classroom, runTimeHours: number, output: TubesAndCost, containsBrokenTube: BrokenTubeTracker) {
+
+  if (runTimeHours < 1) {
+    return output;
+  }
+
+  classRoom.forEach((unit: TubeUnit, i: number) => {
+    unit[0]--;
+    unit[1]--;
+    unit[2]--;
+    unit[3]--;
+    if (unit[0] === 0 && !containsBrokenTube[i]) {
+      containsBrokenTube[i] = true;
+      output.tubes++;
+    }
+    // need to track for 2 broken tubes...
+  });
+  runTimeHours--;
+};
