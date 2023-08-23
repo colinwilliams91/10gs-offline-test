@@ -39,7 +39,7 @@ const sortClassroom = (classroom: Classroom): Classroom => classroom.sort((tubeU
 
 const universityClassroom: Classroom = (Array as any).from({ length: 4 }, () => replaceTubesAndSort([0, 0, 0, 0]));
 
-const tubesAndCost: TubesAndCost = { tubes: 0, cost: 112 }; /* <<-- this accounts for initial 16 tubes cost */
+const tubesAndCost: TubesAndCost = { broken: 0, cost: 112, replaced: 0 }; /* <<-- this accounts for initial 16 tubes cost */
 
 let yearInHours: number = 2700;
 
@@ -51,7 +51,7 @@ type Classroom = TubeUnit[];
 
 type TubeUnit = number[];
 
-type TubesAndCost = { "tubes": number; "cost": number; };
+type TubesAndCost = { "broken": number; "cost": number; "replaced": number };
 
 /**
  * Simulation
@@ -59,37 +59,29 @@ type TubesAndCost = { "tubes": number; "cost": number; };
 
 export const computeTubesBrokenAndCosts = (classroom: Classroom, runTimeHours: number, output: TubesAndCost): TubesAndCost => {
   // sort classroom by second item (unit[1]) of each unit, these will be the determining tubes as they will force unit (4 tubes) replacement
-  const sortedClassroom: TubeUnit[] = sortClassroom(classroom);
+  // const sortedClassroom: TubeUnit[] = sortClassroom(classroom);
 
   while (runTimeHours > 0) {
-    // console.log("SORTED CLASSROOM:", sortedClassroom);
-    sortedClassroom.forEach((unit: TubeUnit, i: number) => {
+    classroom.forEach((unit: TubeUnit, i: number) => {
       // using bracket notation inside forEach to modify original array in place ("spends" 1 hour for each child Tube inside TubeUnit)
       unit.forEach((_: number, j: number, unit: TubeUnit) => {
         unit[j]--;
         if (unit[j] === 0) {
           // count single tube breaking (tubes broken += 1, no cost increase yet)
-          output.tubes++;
+          output.broken++;
         }
       });
 
       if (unit.filter((tube: number) => tube < 1).length > 1) {
-        console.log("UNIT W/ 2+ BROKEN TUBES:", unit, output);
         // count second tube breaking, triggering 4 tube replacements (tubes broken += 1 && cost += 7 * 4)
-        output.tubes++;
         output.cost += 7 * 4;
-        sortedClassroom[i] = replaceTubesAndSort(unit);
+        output.replaced += 4;
+        classroom[i] = replaceTubesAndSort(unit);
       }
 
-      // if (unit[0] < 1 && unit[1] < 1 || unit[2] < 1 || unit[3] < 1) {
-      //   // count second tube breaking, triggering 4 tube replacements (tubes broken += 1 && cost += 7 * 4)
-      //   output.tubes++;
-      //   output.cost += 7 * 4;
-      //   sortedClassroom[i] = replaceTubesAndSort(unit);
-      // }
-    });
-    // all 16 tubes should degrade 1 hour per 1 runTimeHour
-    runTimeHours--;
+      });
+      // all 16 tubes should degrade 1 hour per 1 runTimeHour
+      runTimeHours--;
   }
   console.log("output:", output);
   return output;
