@@ -30,8 +30,6 @@ exports.computeTubesBrokenAndCosts = exports.replaceTubesAndSort = void 0;
 var rand = function () { return Math.floor(Math.random() * (200 - 100 + 1) + 100); };
 var replaceTubesAndSort = function (tubeUnit) { return tubeUnit.map(function (_) { return rand(); }).sort(function (a, b) { return a - b; }); };
 exports.replaceTubesAndSort = replaceTubesAndSort;
-// sorts classRoom Matrix by shortest second item (Tube "lifetime") to longest (TubeUnit[1])
-var sortClassroom = function (classroom) { return classroom.sort(function (tubeUnitOne, tubeUnitTwo) { return tubeUnitOne[1] - tubeUnitTwo[1]; }); };
 /**
  * Givens
  */
@@ -42,8 +40,6 @@ var yearInHours = 2700;
  * Simulation
  */
 var computeTubesBrokenAndCosts = function (classroom, runTimeHours, output) {
-    // sort classroom by second item (unit[1]) of each unit, these will be the determining tubes as they will force unit (4 tubes) replacement
-    // const sortedClassroom: TubeUnit[] = sortClassroom(classroom);
     while (runTimeHours > 0) {
         classroom.forEach(function (unit, i) {
             // using bracket notation inside forEach to modify original array in place ("spends" 1 hour for each child Tube inside TubeUnit)

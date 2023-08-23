@@ -30,9 +30,6 @@ const rand = (): number => Math.floor(Math.random() * (200 - 100 + 1) + 100);
 
 export const replaceTubesAndSort = (tubeUnit: TubeUnit): TubeUnit => tubeUnit.map((_: number) => rand()).sort((a: number, b: number) => a - b);
 
-// sorts classRoom Matrix by shortest second item (Tube "lifetime") to longest (TubeUnit[1])
-const sortClassroom = (classroom: Classroom): Classroom => classroom.sort((tubeUnitOne: TubeUnit, tubeUnitTwo: TubeUnit) => tubeUnitOne[1] - tubeUnitTwo[1]);
-
 /**
  * Givens
  */
@@ -58,8 +55,6 @@ type TubesAndCost = { "broken": number; "cost": number; "replaced": number };
  */
 
 export const computeTubesBrokenAndCosts = (classroom: Classroom, runTimeHours: number, output: TubesAndCost): TubesAndCost => {
-  // sort classroom by second item (unit[1]) of each unit, these will be the determining tubes as they will force unit (4 tubes) replacement
-  // const sortedClassroom: TubeUnit[] = sortClassroom(classroom);
 
   while (runTimeHours > 0) {
     classroom.forEach((unit: TubeUnit, i: number) => {
@@ -78,8 +73,7 @@ export const computeTubesBrokenAndCosts = (classroom: Classroom, runTimeHours: n
         output.replaced += 4;
         classroom[i] = replaceTubesAndSort(unit);
       }
-
-      });
+    });
       // all 16 tubes should degrade 1 hour per 1 runTimeHour
       runTimeHours--;
   }
