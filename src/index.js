@@ -34,6 +34,7 @@ var sortClassroom = function (classroom) { return classroom.sort(function (tubeU
 var universityClassroom = Array.from({ length: 4 }, function () { return replaceTubesAndSort([0, 0, 0, 0]); });
 var tubesAndCost = { tubes: 0, cost: 0 };
 var yearInHours = 2700;
+var brokenTubeTracker = { 0: false, 1: false, 2: false, 3: false };
 /**
  * Simulation
  */
@@ -66,6 +67,7 @@ var computeTubesBrokenAndCosts = function (classroom, runTimeHours, output) {
                 // console.log(classroom);
                 // unit[1]--;
                 runTimeHours--;
+                // TODO: above runTimeHours should only change ONCE per 16 tubes tick...
             }
             else {
                 // when the second shortest Tube hits 0 from its generated "hour life expectancy" we "replace" the Tube Unit (array inside "classroom matrix")
@@ -84,4 +86,31 @@ var computeTubesBrokenAndCosts = function (classroom, runTimeHours, output) {
 /**
  * Above implementation has poor Time Complexity but is solved Algorithmically
  */
-computeTubesBrokenAndCosts(universityClassroom, yearInHours, tubesAndCost);
+// computeTubesBrokenAndCosts(universityClassroom, yearInHours, tubesAndCost);
+degradeAllTubes(universityClassroom, yearInHours, tubesAndCost, brokenTubeTracker);
+function degradeAllTubes(classRoom, runTimeHours, output, containsBrokenTube) {
+    if (runTimeHours < 1) {
+        console.log("output:", output);
+        return output;
+    }
+    classRoom.forEach(function (unit, i) {
+        unit[0]--;
+        unit[1]--;
+        unit[2]--;
+        unit[3]--;
+        if (unit[0] === 0 && !containsBrokenTube[i]) {
+            containsBrokenTube[i] = true;
+            // count single tube breaking
+            output.tubes++;
+        }
+        if (containsBrokenTube[i] && unit[1] === 0) {
+            classRoom[i] = replaceTubesAndSort(unit);
+            // count second tube breaking, triggering 4 tube replacements (cost += 7 * 4 && tubes += 2 total)
+            output.tubes++;
+            output.cost += 7 * 4;
+        }
+    });
+    runTimeHours--;
+    return degradeAllTubes(classRoom, runTimeHours, output, containsBrokenTube);
+}
+;

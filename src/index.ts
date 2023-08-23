@@ -108,13 +108,16 @@ const computeTubesBrokenAndCosts = (classroom: Classroom, runTimeHours: number, 
  * Above implementation has poor Time Complexity but is solved Algorithmically
  */
 
-computeTubesBrokenAndCosts(universityClassroom, yearInHours, tubesAndCost);
+// computeTubesBrokenAndCosts(universityClassroom, yearInHours, tubesAndCost);
+
+degradeAllTubes(universityClassroom, yearInHours, tubesAndCost, brokenTubeTracker);
 
 
 
 function degradeAllTubes(classRoom: Classroom, runTimeHours: number, output: TubesAndCost, containsBrokenTube: BrokenTubeTracker) {
 
   if (runTimeHours < 1) {
+    console.log("output:", output);
     return output;
   }
 
@@ -125,9 +128,16 @@ function degradeAllTubes(classRoom: Classroom, runTimeHours: number, output: Tub
     unit[3]--;
     if (unit[0] === 0 && !containsBrokenTube[i]) {
       containsBrokenTube[i] = true;
+      // count single tube breaking
       output.tubes++;
     }
-    // need to track for 2 broken tubes...
+    if (containsBrokenTube[i] && unit[1] === 0) {
+      classRoom[i] = replaceTubesAndSort(unit);
+      // count second tube breaking, triggering 4 tube replacements (cost += 7 * 4 && tubes += 2 total)
+      output.tubes++;
+      output.cost += 7 * 4;
+    }
   });
   runTimeHours--;
+  return degradeAllTubes(classRoom, runTimeHours, output, containsBrokenTube);
 };
