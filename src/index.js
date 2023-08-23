@@ -48,17 +48,26 @@ var computeTubesBrokenAndCosts = function (classroom, runTimeHours, output) {
         // console.log("SORTED CLASSROOM:", sortedClassroom);
         sortedClassroom.forEach(function (unit, i) {
             // using bracket notation inside forEach to modify original array in place ("spends" 1 hour for each child Tube inside TubeUnit)
-            unit.forEach(function (_, j, unit) { return unit[j]--; });
-            if (unit[0] === 0) {
-                // count single tube breaking (tubes broken += 1, no cost increase yet)
-                output.tubes++;
-            }
-            if (unit[0] < 1 && unit[1] < 1 || unit[2] < 1 || unit[3] < 1) {
+            unit.forEach(function (_, j, unit) {
+                unit[j]--;
+                if (unit[j] === 0) {
+                    // count single tube breaking (tubes broken += 1, no cost increase yet)
+                    output.tubes++;
+                }
+            });
+            if (unit.filter(function (tube) { return tube < 1; }).length > 1) {
+                console.log("UNIT W/ 2 BROKEN TUBES:", unit);
                 // count second tube breaking, triggering 4 tube replacements (tubes broken += 1 && cost += 7 * 4)
                 output.tubes++;
                 output.cost += 7 * 4;
                 sortedClassroom[i] = (0, exports.replaceTubesAndSort)(unit);
             }
+            // if (unit[0] < 1 && unit[1] < 1 || unit[2] < 1 || unit[3] < 1) {
+            //   // count second tube breaking, triggering 4 tube replacements (tubes broken += 1 && cost += 7 * 4)
+            //   output.tubes++;
+            //   output.cost += 7 * 4;
+            //   sortedClassroom[i] = replaceTubesAndSort(unit);
+            // }
         });
         // all 16 tubes should degrade 1 hour per 1 runTimeHour
         runTimeHours--;

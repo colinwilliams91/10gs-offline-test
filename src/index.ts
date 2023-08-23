@@ -65,18 +65,28 @@ export const computeTubesBrokenAndCosts = (classroom: Classroom, runTimeHours: n
     // console.log("SORTED CLASSROOM:", sortedClassroom);
     sortedClassroom.forEach((unit: TubeUnit, i: number) => {
       // using bracket notation inside forEach to modify original array in place ("spends" 1 hour for each child Tube inside TubeUnit)
-      unit.forEach((_: number, j: number, unit: TubeUnit) => unit[j]--);
+      unit.forEach((_: number, j: number, unit: TubeUnit) => {
+        unit[j]--;
+        if (unit[j] === 0) {
+          // count single tube breaking (tubes broken += 1, no cost increase yet)
+          output.tubes++;
+        }
+      });
 
-      if (unit[0] === 0) {
-        // count single tube breaking (tubes broken += 1, no cost increase yet)
-        output.tubes++;
-      }
-      if (unit[0] < 1 && unit[1] < 1 || unit[2] < 1 || unit[3] < 1) {
+      if (unit.filter((tube: number) => tube < 1).length > 1) {
+        console.log("UNIT W/ 2+ BROKEN TUBES:", unit, output);
         // count second tube breaking, triggering 4 tube replacements (tubes broken += 1 && cost += 7 * 4)
         output.tubes++;
         output.cost += 7 * 4;
         sortedClassroom[i] = replaceTubesAndSort(unit);
       }
+
+      // if (unit[0] < 1 && unit[1] < 1 || unit[2] < 1 || unit[3] < 1) {
+      //   // count second tube breaking, triggering 4 tube replacements (tubes broken += 1 && cost += 7 * 4)
+      //   output.tubes++;
+      //   output.cost += 7 * 4;
+      //   sortedClassroom[i] = replaceTubesAndSort(unit);
+      // }
     });
     // all 16 tubes should degrade 1 hour per 1 runTimeHour
     runTimeHours--;
