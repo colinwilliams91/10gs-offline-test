@@ -2,9 +2,7 @@
 
 Please pull `master` branch for solution.
 
-I wrote an _alternative_ solution using recursion in branch: [recursive-solution-v2](https://github.com/colinwilliams91/10gs-offline-test/tree/recursive-solution-v2)
-**[While-Loop-Solution-V2](https://github.com/colinwilliams91/10gs-offline-test)** Execution Time: 6.5ms - 7.5ms (_Master Branch_)
-**[Recursive-Solution-V2](https://github.com/colinwilliams91/10gs-offline-test/tree/recursive-solution-v2)** Execution Time: 9.3ms - 11.0ms
+I wrote an _alternative_ solution using recursion in branch: [recursive-solution-v2](https://github.com/colinwilliams91/10gs-offline-test/tree/recursive-solution-v2) in an effort to optimize time complexity.
 
 | Solution  | Execution Time | Branch |
 | --------- | -------------- | ------ |
