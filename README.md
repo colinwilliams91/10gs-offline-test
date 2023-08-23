@@ -2,7 +2,7 @@
 
 Please pull `master` branch for solution.
 
-I wrote an _alternative_ solution using recursion in branch: `recursive-solution-v2`
+I wrote an _alternative_ solution using recursion in branch: [recursive-solution-v2](https://github.com/colinwilliams91/10gs-offline-test/tree/recursive-solution-v2)
 
 ## To run:
 
