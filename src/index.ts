@@ -28,7 +28,7 @@
 
 const rand = (): number => Math.floor(Math.random() * (200 - 100 + 1) + 100);
 
-const replaceTubesAndSort = (tubeUnit: TubeUnit): TubeUnit => tubeUnit.map((_: number) => rand()).sort((a: number, b: number) => a - b);
+export const replaceTubesAndSort = (tubeUnit: TubeUnit): TubeUnit => tubeUnit.map((_: number) => rand()).sort((a: number, b: number) => a - b);
 
 // sorts classRoom Matrix by shortest second item (Tube "lifetime") to longest (TubeUnit[1])
 const sortClassroom = (classroom: Classroom): Classroom => classroom.sort((tubeUnitOne: TubeUnit, tubeUnitTwo: TubeUnit) => tubeUnitOne[1] - tubeUnitTwo[1]);
@@ -57,20 +57,21 @@ type TubesAndCost = { "tubes": number; "cost": number; };
  * Simulation
  */
 
-const computeTubesBrokenAndCosts = (classroom: Classroom, runTimeHours: number, output: TubesAndCost): TubesAndCost => {
+export const computeTubesBrokenAndCosts = (classroom: Classroom, runTimeHours: number, output: TubesAndCost): TubesAndCost => {
   // sort classroom by second item (unit[1]) of each unit, these will be the determining tubes as they will force unit (4 tubes) replacement
-  let sortedClassroom: TubeUnit[] = sortClassroom(classroom);
+  const sortedClassroom: TubeUnit[] = sortClassroom(classroom);
 
   while (runTimeHours > 0) {
+    // console.log("SORTED CLASSROOM:", sortedClassroom);
     sortedClassroom.forEach((unit: TubeUnit, i: number) => {
       // using bracket notation inside forEach to modify original array in place ("spends" 1 hour for each child Tube inside TubeUnit)
       unit.forEach((_: number, j: number, unit: TubeUnit) => unit[j]--);
 
-      if (unit[0] === 0 && unit[1] >= 0) {
+      if (unit[0] === 0) {
         // count single tube breaking (tubes broken += 1, no cost increase yet)
         output.tubes++;
       }
-      if (unit[0] < 1 && unit[1] === 0) {
+      if (unit[0] < 1 && unit[1] < 1 || unit[2] < 1 || unit[3] < 1) {
         // count second tube breaking, triggering 4 tube replacements (tubes broken += 1 && cost += 7 * 4)
         output.tubes++;
         output.cost += 7 * 4;
@@ -85,11 +86,12 @@ const computeTubesBrokenAndCosts = (classroom: Classroom, runTimeHours: number, 
 };
 
 /**
- * Above implementation has poor Time Complexity but is solved Algorithmically
+ * Above: implementation has poor Time Complexity but is solved Algorithmically
+ * Below: runs simulation and prints execution time
  */
 
 (() => {
-  console.time('while loop solution');
+  console.time("solution execution time");
   computeTubesBrokenAndCosts(universityClassroom, yearInHours, tubesAndCost);
-  console.timeEnd('while loop solution');
+  console.timeEnd("solution execution time");
 })();
