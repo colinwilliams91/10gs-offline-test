@@ -20,7 +20,7 @@ node index.js # <-- to run
 [Node v18](https://nodejs.dev/en/download/)
 
 ```sh
-npm i typescript --save-dev 
+npm i typescript --save-dev
 ```
 
 OR
