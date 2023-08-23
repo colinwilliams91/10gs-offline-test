@@ -39,7 +39,7 @@ const sortClassroom = (classroom: Classroom): Classroom => classroom.sort((tubeU
 
 const universityClassroom: Classroom = (Array as any).from({ length: 4 }, () => replaceTubesAndSort([0, 0, 0, 0]));
 
-const tubesAndCost: TubesAndCost = { tubes: 0, cost: 0 };
+const tubesAndCost: TubesAndCost = { tubes: 0, cost: 112 };
 
 let yearInHours: number = 2700;
 
@@ -104,14 +104,9 @@ const computeTubesBrokenAndCosts = (classroom: Classroom, runTimeHours: number, 
   return output;
 };
 
-/**
- * Above implementation has poor Time Complexity but is solved Algorithmically
- */
-
 // computeTubesBrokenAndCosts(universityClassroom, yearInHours, tubesAndCost);
 
 degradeAllTubes(universityClassroom, yearInHours, tubesAndCost, brokenTubeTracker);
-
 
 
 function degradeAllTubes(classRoom: Classroom, runTimeHours: number, output: TubesAndCost, containsBrokenTube: BrokenTubeTracker) {
@@ -126,18 +121,22 @@ function degradeAllTubes(classRoom: Classroom, runTimeHours: number, output: Tub
     unit[1]--;
     unit[2]--;
     unit[3]--;
-    if (unit[0] === 0 && !containsBrokenTube[i]) {
-      containsBrokenTube[i] = true;
+    if (unit[0] === 0 && unit[1] >= 0) {
       // count single tube breaking
       output.tubes++;
     }
-    if (containsBrokenTube[i] && unit[1] === 0) {
+    if (unit[0] < 1 && unit[1] === 0) {
       classRoom[i] = replaceTubesAndSort(unit);
       // count second tube breaking, triggering 4 tube replacements (cost += 7 * 4 && tubes += 2 total)
       output.tubes++;
       output.cost += 7 * 4;
+      // containsBrokenTube[i] = false;
     }
   });
   runTimeHours--;
-  return degradeAllTubes(classRoom, runTimeHours, output, containsBrokenTube);
+  degradeAllTubes(classRoom, runTimeHours, output, containsBrokenTube);
 };
+
+/**
+ * I used recursion above in order to... hold onto a tracked boolean value.. which i ended up not needing...
+ */

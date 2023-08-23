@@ -32,7 +32,7 @@ var sortClassroom = function (classroom) { return classroom.sort(function (tubeU
  * Givens
  */
 var universityClassroom = Array.from({ length: 4 }, function () { return replaceTubesAndSort([0, 0, 0, 0]); });
-var tubesAndCost = { tubes: 0, cost: 0 };
+var tubesAndCost = { tubes: 0, cost: 112 };
 var yearInHours = 2700;
 var brokenTubeTracker = { 0: false, 1: false, 2: false, 3: false };
 /**
@@ -89,8 +89,9 @@ var computeTubesBrokenAndCosts = function (classroom, runTimeHours, output) {
 // computeTubesBrokenAndCosts(universityClassroom, yearInHours, tubesAndCost);
 degradeAllTubes(universityClassroom, yearInHours, tubesAndCost, brokenTubeTracker);
 function degradeAllTubes(classRoom, runTimeHours, output, containsBrokenTube) {
+    console.log("input:", classRoom, runTimeHours, output);
     if (runTimeHours < 1) {
-        console.log("output:", output);
+        // console.log("output:", output);
         return output;
     }
     classRoom.forEach(function (unit, i) {
@@ -98,19 +99,20 @@ function degradeAllTubes(classRoom, runTimeHours, output, containsBrokenTube) {
         unit[1]--;
         unit[2]--;
         unit[3]--;
-        if (unit[0] === 0 && !containsBrokenTube[i]) {
-            containsBrokenTube[i] = true;
+        if (unit[0] === 0 && unit[1] >= 0) {
+            // containsBrokenTube[i] = true;
             // count single tube breaking
             output.tubes++;
         }
-        if (containsBrokenTube[i] && unit[1] === 0) {
+        if (unit[0] < 1 && unit[1] === 0) {
             classRoom[i] = replaceTubesAndSort(unit);
             // count second tube breaking, triggering 4 tube replacements (cost += 7 * 4 && tubes += 2 total)
             output.tubes++;
             output.cost += 7 * 4;
+            // containsBrokenTube[i] = false;
         }
     });
     runTimeHours--;
-    return degradeAllTubes(classRoom, runTimeHours, output, containsBrokenTube);
+    degradeAllTubes(classRoom, runTimeHours, output, containsBrokenTube);
 }
 ;
