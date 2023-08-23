@@ -28,10 +28,7 @@
 
 const rand = (): number => Math.floor(Math.random() * (200 - 100 + 1) + 100);
 
-const replaceTubesAndSort = (tubeUnit: TubeUnit): TubeUnit => tubeUnit.map((_: number) => rand()).sort((a: number, b: number) => a - b);
-
-// sorts classRoom Matrix by shortest second item (Tube) to longest (array[1])
-const sortClassroom = (classroom: Classroom): Classroom => classroom.sort((tubeUnitOne: TubeUnit, tubeUnitTwo: TubeUnit) => tubeUnitOne[1] - tubeUnitTwo[1]);
+export const replaceTubesAndSort = (tubeUnit: TubeUnit): TubeUnit => tubeUnit.map((_: number) => rand()).sort((a: number, b: number) => a - b);
 
 /**
  * Givens
@@ -39,11 +36,9 @@ const sortClassroom = (classroom: Classroom): Classroom => classroom.sort((tubeU
 
 const universityClassroom: Classroom = (Array as any).from({ length: 4 }, () => replaceTubesAndSort([0, 0, 0, 0]));
 
-const tubesAndCost: TubesAndCost = { tubes: 0, cost: 112 };
+const tubesAndCost: TubesAndCost = { broken: 0, cost: 112, replaced: 0 };
 
 let yearInHours: number = 2700;
-
-const brokenTubeTracker = { 0: false, 1: false, 2: false, 3: false };
 
 /**
  * Types
@@ -53,15 +48,13 @@ type Classroom = TubeUnit[];
 
 type TubeUnit = number[];
 
-type TubesAndCost = { "tubes": number; "cost": number; };
-
-type BrokenTubeTracker = { 0: boolean, 1: boolean, 2: boolean, 3: boolean };
+type TubesAndCost = { "broken": number; "cost": number; "replaced": number };
 
 /**
  * Simulation
  */
 
-const degradeAllTubes = (classRoom: Classroom, runTimeHours: number, output: TubesAndCost, containsBrokenTube: BrokenTubeTracker) => {
+export const computeTubesBrokenAndCosts  = (classRoom: Classroom, runTimeHours: number, output: TubesAndCost) => {
   // base case
   if (runTimeHours < 1) {
     console.log("output:", output);
@@ -69,24 +62,22 @@ const degradeAllTubes = (classRoom: Classroom, runTimeHours: number, output: Tub
   }
 
   classRoom.forEach((unit: TubeUnit, i: number) => {
-    unit[0]--;
-    unit[1]--;
-    unit[2]--;
-    unit[3]--;
-    if (unit[0] === 0 && unit[1] >= 0) {
-      // count single tube breaking
-      output.tubes++;
-    }
-    if (unit[0] < 1 && unit[1] === 0) {
-      classRoom[i] = replaceTubesAndSort(unit);
+    unit.forEach((_: number, j: number, unit: TubeUnit) => {
+      unit[j]--;
+      if (unit[j] === 0) {
+        // count single tube breaking
+        output.broken++;
+      }
+    })
+    if (unit.filter((tube: number) => tube < 1).length > 1) {
       // count second tube breaking, triggering 4 tube replacements (cost += 7 * 4 && tubes += 2 total)
-      output.tubes++;
       output.cost += 7 * 4;
-      // containsBrokenTube[i] = false;
+      output.replaced += 4;
+      classRoom[i] = replaceTubesAndSort(unit);
     }
   });
   runTimeHours--;
-  degradeAllTubes(classRoom, runTimeHours, output, containsBrokenTube);
+  return computeTubesBrokenAndCosts (classRoom, runTimeHours, output);
 };
 
 /**
@@ -95,7 +86,7 @@ const degradeAllTubes = (classRoom: Classroom, runTimeHours: number, output: Tub
  */
 
 (() => {
-  console.time('recursive solution');
-  degradeAllTubes(universityClassroom, yearInHours, tubesAndCost, brokenTubeTracker);
-  console.timeEnd('recursive solution');
+  console.time("solution execution time");
+  computeTubesBrokenAndCosts (universityClassroom, yearInHours, tubesAndCost);
+  console.timeEnd("solution execution time");
 })();

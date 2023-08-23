@@ -1,3 +1,4 @@
+"use strict";
 /**
  * - 1 Classroom
  *   - 4 Tube Units
@@ -21,55 +22,54 @@
  *
  * When 2 Tubes fail in a single Tube Unit replace all 4 Tubes
  */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.computeTubesBrokenAndCosts = exports.replaceTubesAndSort = void 0;
 /**
  * Helpers
  */
 var rand = function () { return Math.floor(Math.random() * (200 - 100 + 1) + 100); };
 var replaceTubesAndSort = function (tubeUnit) { return tubeUnit.map(function (_) { return rand(); }).sort(function (a, b) { return a - b; }); };
-// sorts classRoom Matrix by shortest second item (Tube) to longest (array[1])
-var sortClassroom = function (classroom) { return classroom.sort(function (tubeUnitOne, tubeUnitTwo) { return tubeUnitOne[1] - tubeUnitTwo[1]; }); };
+exports.replaceTubesAndSort = replaceTubesAndSort;
 /**
  * Givens
  */
-var universityClassroom = Array.from({ length: 4 }, function () { return replaceTubesAndSort([0, 0, 0, 0]); });
-var tubesAndCost = { tubes: 0, cost: 112 };
+var universityClassroom = Array.from({ length: 4 }, function () { return (0, exports.replaceTubesAndSort)([0, 0, 0, 0]); });
+var tubesAndCost = { broken: 0, cost: 112, replaced: 0 };
 var yearInHours = 2700;
-var brokenTubeTracker = { 0: false, 1: false, 2: false, 3: false };
 /**
  * Simulation
  */
-var degradeAllTubes = function (classRoom, runTimeHours, output, containsBrokenTube) {
+var computeTubesBrokenAndCosts = function (classRoom, runTimeHours, output) {
     // base case
     if (runTimeHours < 1) {
         console.log("output:", output);
         return output;
     }
     classRoom.forEach(function (unit, i) {
-        unit[0]--;
-        unit[1]--;
-        unit[2]--;
-        unit[3]--;
-        if (unit[0] === 0 && unit[1] >= 0) {
-            // count single tube breaking
-            output.tubes++;
-        }
-        if (unit[0] < 1 && unit[1] === 0) {
-            classRoom[i] = replaceTubesAndSort(unit);
+        unit.forEach(function (_, j, unit) {
+            unit[j]--;
+            if (unit[j] === 0) {
+                // count single tube breaking
+                output.broken++;
+            }
+        });
+        if (unit.filter(function (tube) { return tube < 1; }).length > 1) {
             // count second tube breaking, triggering 4 tube replacements (cost += 7 * 4 && tubes += 2 total)
-            output.tubes++;
             output.cost += 7 * 4;
-            // containsBrokenTube[i] = false;
+            output.replaced += 4;
+            classRoom[i] = (0, exports.replaceTubesAndSort)(unit);
         }
     });
     runTimeHours--;
-    degradeAllTubes(classRoom, runTimeHours, output, containsBrokenTube);
+    return (0, exports.computeTubesBrokenAndCosts)(classRoom, runTimeHours, output);
 };
+exports.computeTubesBrokenAndCosts = computeTubesBrokenAndCosts;
 /**
  * I used recursion above in order to... hold onto a tracked boolean value.. which i ended up not needing...
+ * Below invokes the function and prints execution time.
  */
-// degradeAllTubes(universityClassroom, yearInHours, tubesAndCost, brokenTubeTracker);
 (function () {
-    console.time('recursive solution');
-    degradeAllTubes(universityClassroom, yearInHours, tubesAndCost, brokenTubeTracker);
-    console.timeEnd('recursive solution');
+    console.time("solution execution time");
+    (0, exports.computeTubesBrokenAndCosts)(universityClassroom, yearInHours, tubesAndCost);
+    console.timeEnd("solution execution time");
 })();
