@@ -8,7 +8,7 @@ I wrote an _alternative_ solution using recursion in branch: [recursive-solution
 
 | Solution  | Execution Time | Branch |
 | --------- | -------------- | ------ |
-| Iterative | 6.5ms - 7.5ms  | **[While-Loop-Solution-V2](https://github.com/colinwilliams91/10gs-offline-test)** Execution Time: 6.5ms - 7.5ms (_Master Branch_) |
+| Iterative | 6.5ms - 7.5ms  | **[While-Loop-Solution-V2](https://github.com/colinwilliams91/10gs-offline-test)** (_Master Branch_) |
 | Recursion | 9.3ms - 11.0ms | **[Recursive-Solution-V2](https://github.com/colinwilliams91/10gs-offline-test/tree/recursive-solution-v2)** |
 
 ## To run:
