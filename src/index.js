@@ -83,15 +83,11 @@ var computeTubesBrokenAndCosts = function (classroom, runTimeHours, output) {
     console.log(output);
     return output;
 };
-/**
- * Above implementation has poor Time Complexity but is solved Algorithmically
- */
 // computeTubesBrokenAndCosts(universityClassroom, yearInHours, tubesAndCost);
 degradeAllTubes(universityClassroom, yearInHours, tubesAndCost, brokenTubeTracker);
 function degradeAllTubes(classRoom, runTimeHours, output, containsBrokenTube) {
-    console.log("input:", classRoom, runTimeHours, output);
     if (runTimeHours < 1) {
-        // console.log("output:", output);
+        console.log("output:", output);
         return output;
     }
     classRoom.forEach(function (unit, i) {
@@ -100,7 +96,6 @@ function degradeAllTubes(classRoom, runTimeHours, output, containsBrokenTube) {
         unit[2]--;
         unit[3]--;
         if (unit[0] === 0 && unit[1] >= 0) {
-            // containsBrokenTube[i] = true;
             // count single tube breaking
             output.tubes++;
         }
@@ -116,3 +111,6 @@ function degradeAllTubes(classRoom, runTimeHours, output, containsBrokenTube) {
     degradeAllTubes(classRoom, runTimeHours, output, containsBrokenTube);
 }
 ;
+/**
+ * I used recursion above in order to... hold onto a tracked boolean value.. which i ended up not needing...
+ */
