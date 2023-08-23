@@ -49,18 +49,23 @@ var computeTubesBrokenAndCosts = function (classroom, runTimeHours, output) {
                 output.tubes++;
             }
             if (unit[0] < 1 && unit[1] === 0) {
-                sortedClassroom[i] = replaceTubesAndSort(unit);
                 // count second tube breaking, triggering 4 tube replacements (tubes broken += 1 && cost += 7 * 4)
                 output.tubes++;
                 output.cost += 7 * 4;
+                sortedClassroom[i] = replaceTubesAndSort(unit);
             }
         });
+        // all 16 tubes should degrade 1 hour per 1 runTimeHour
         runTimeHours--;
     }
-    console.log(output);
+    console.log("output:", output);
     return output;
 };
 /**
  * Above implementation has poor Time Complexity but is solved Algorithmically
  */
-computeTubesBrokenAndCosts(universityClassroom, yearInHours, tubesAndCost);
+(function () {
+    console.time('while loop solution');
+    computeTubesBrokenAndCosts(universityClassroom, yearInHours, tubesAndCost);
+    console.timeEnd('while loop solution');
+})();

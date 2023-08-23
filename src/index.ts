@@ -80,7 +80,7 @@ const computeTubesBrokenAndCosts = (classroom: Classroom, runTimeHours: number, 
     // all 16 tubes should degrade 1 hour per 1 runTimeHour
     runTimeHours--;
   }
-  console.log(output);
+  console.log("output:", output);
   return output;
 };
 
@@ -88,4 +88,8 @@ const computeTubesBrokenAndCosts = (classroom: Classroom, runTimeHours: number, 
  * Above implementation has poor Time Complexity but is solved Algorithmically
  */
 
-computeTubesBrokenAndCosts(universityClassroom, yearInHours, tubesAndCost);
+(() => {
+  console.time('while loop solution');
+  computeTubesBrokenAndCosts(universityClassroom, yearInHours, tubesAndCost);
+  console.timeEnd('while loop solution');
+})();
