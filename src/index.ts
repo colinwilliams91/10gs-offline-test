@@ -39,7 +39,7 @@ const sortClassroom = (classroom: Classroom): Classroom => classroom.sort((tubeU
 
 const universityClassroom: Classroom = (Array as any).from({ length: 4 }, () => replaceTubesAndSort([0, 0, 0, 0]));
 
-const tubesAndCost: TubesAndCost = { tubes: 0, cost: 0 };
+const tubesAndCost: TubesAndCost = { tubes: 16, cost: 112 };
 
 let yearInHours: number = 2700;
 
@@ -60,21 +60,26 @@ type TubesAndCost = { "tubes": number; "cost": number; };
 const computeTubesBrokenAndCosts = (classroom: Classroom, runTimeHours: number, output: TubesAndCost): TubesAndCost => {
   // sort classroom by second item unit[1] of each unit, these will be the determining tubes as they will force unit replacement
   let sortedClassroom: TubeUnit[] = sortClassroom(classroom);
-  console.log("sorted CLASSROOM:", sortedClassroom);
 
-  while (runTimeHours >= 0) {
+  while (runTimeHours > 0) {
     sortedClassroom.forEach((unit: TubeUnit, i: number, classroom: Classroom) => {
-      if (unit[1] > 0) {
-        console.log(classroom);
-        unit[1]--;
-        runTimeHours--;
-      } else {
-        // when the second shortest Tube hits 0 from its generated "hour life expectancy" we "replace" the Tube Unit (array inside "classroom matrix")
+      console.log("CHECK:", output, sortedClassroom, runTimeHours);
+      unit[0]--;
+      unit[1]--;
+      unit[2]--;
+      unit[3]--;
+      if (unit[0] === 0 && unit[1] >= 0) {
+        // count single tube breaking
+        output.tubes++;
+      }
+      if (unit[0] < 1 && unit[1] === 0) {
         sortedClassroom[i] = replaceTubesAndSort(unit);
-        output.tubes += 1 * 4;
+        // count second tube breaking, triggering 4 tube replacements (cost += 7 * 4 && tubes += 2 total)
+        output.tubes++;
         output.cost += 7 * 4;
       }
     });
+    runTimeHours--;
   }
   console.log(output);
   return output;

@@ -32,7 +32,7 @@ var sortClassroom = function (classroom) { return classroom.sort(function (tubeU
  * Givens
  */
 var universityClassroom = Array.from({ length: 4 }, function () { return replaceTubesAndSort([0, 0, 0, 0]); });
-var tubesAndCost = { tubes: 0, cost: 0 };
+var tubesAndCost = { tubes: 16, cost: 112 };
 var yearInHours = 2700;
 /**
  * Simulation
@@ -40,22 +40,25 @@ var yearInHours = 2700;
 var computeTubesBrokenAndCosts = function (classroom, runTimeHours, output) {
     // sort classroom by second item unit[1] of each unit, these will be the determining tubes as they will force unit replacement
     var sortedClassroom = sortClassroom(classroom);
-    console.log("sorted CLASSROOM:", sortedClassroom);
-    while (runTimeHours >= 0) {
+    while (runTimeHours > 0) {
         sortedClassroom.forEach(function (unit, i, classroom) {
-            if (unit[1] > 0) {
-                console.log(classroom);
-                unit[1]--;
-                runTimeHours--;
+            console.log("CHECK:", output, sortedClassroom, runTimeHours);
+            unit[0]--;
+            unit[1]--;
+            unit[2]--;
+            unit[3]--;
+            if (unit[0] === 0 && unit[1] >= 0) {
+                // count single tube breaking
+                output.tubes++;
             }
-            else {
-                // when the second shortest Tube hits 0 from its generated "hour life expectancy" we "replace" the Tube Unit (array inside "classroom matrix")
+            if (unit[0] < 1 && unit[1] === 0) {
                 sortedClassroom[i] = replaceTubesAndSort(unit);
-                // runTimeHours--;
-                output.tubes += 1 * 4;
+                // count second tube breaking, triggering 4 tube replacements (cost += 7 * 4 && tubes += 2 total)
+                output.tubes++;
                 output.cost += 7 * 4;
             }
         });
+        runTimeHours--;
     }
     console.log(output);
     return output;
