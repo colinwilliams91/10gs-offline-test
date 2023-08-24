@@ -2,7 +2,7 @@
 
 Please pull `Master` branch for solution.
 
-I wrote an _alternative_ solution using recursion in branch: [recursive-solution-v2](https://github.com/colinwilliams91/10gs-offline-test/tree/recursive-solution-v2) in an effort to optimize time complexity.
+I wrote an _alternative_ solution using recursion in branch: [recursive-solution-v2](https://github.com/colinwilliams91/10gs-offline-test/tree/recursive-solution-v2) to experiment with time complexity.
 
 | Solution  | Execution Time | Branch |
 | --------- | -------------- | ------ |
